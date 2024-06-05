@@ -10,38 +10,54 @@ class knightsMoves {
   }
 
   findShortestPath(startX, startY, endX, endY){
-    const queue = [[startX, startY, 0]];
+    const queue = [[startX, startY]];
     const visited = new Set();
+    const parents = new Map();
     const startPosition = `${startX}, ${startY}`;
     const endPosition = `${endX}, ${endY}`;
 
     if (startPosition === endPosition){
-      return 0;
+      return [[startX, startY]];
     }
+
+    visited.add(startPosition);
+    parents.set(startPosition, null);
 
     while (queue.length > 0){
-      const [x, y, depth] = queue.shift();
+      const [x, y] = queue.shift();
       const position = `${x}, ${y}`;
 
-      if (!visited.has(position)){
-        visited.add(position);
+      for (const [dx, dy] of this.possibleMoves){
+        const newX = x + dx;
+        const newY = y + dy;
+        const newPosition = `${newX}, ${newY}`;
 
-        for (const [dx, dy] of this.possibleMoves){
-          const newX = x + dx;
-          const newY = y + dy;
-          const newPosition = `${newX}, ${newY}`;
-
-          if (newPosition === endPosition){
-            return depth + 1;
-          }
+        if (newPosition === endPosition){
+          parents.set(newPosition, position);
+          return this.constructPath(parents, startPosition, endPosition);
+        }
 
           if (this.isValidMove(newX, newY) && !visited.has(newPosition)){
-            queue.push([newX, newY, depth + 1]);
+            queue.push([newX, newY]);
+            visited.add(newPosition);
+            parents.set(newPosition, position);
           }
-        }
       }
     }
-    return -1;
+    return [];
+  }
+
+  constructPath(parents, startPosition, endPosition){
+    const path = [];
+    let currentPosition = endPosition;
+
+    while (currentPosition){
+      const [x, y] = currentPosition.split(',').map(Number);
+      path.unshift([x, y]);
+      currentPosition = parents.get(currentPosition);
+    }
+
+    return path;
   }
 }
 
