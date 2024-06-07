@@ -63,5 +63,5 @@ class knightsMoves {
 
 const knight = new knightsMoves();
 const startX = 0, startY = 0;
-const endX = 7, endY = 7;
+const endX = 8, endY = 8;
 console.log(knight.findShortestPath(startX, startY, endX, endY));
